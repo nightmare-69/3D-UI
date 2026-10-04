@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>3D Form</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <div class="scene">
+      <div class="float">
+        <div class="rectangle" id="card">
+          <div class="field">
+            <input type="text" id="name" placeholder=" ">
+            <label for="name">Enter your name</label>
+          </div>
+          <div class="buttons">
+            <button class="primary">Button 1</button>
+            <button class="secondary">Button 2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Card tilts toward the mouse or your finger (3D parallax)
+      const scene = document.querySelector('.scene');
+      const card = document.getElementById('card');
+
+      function tilt(e) {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - (r.left + r.width / 2)) / window.innerWidth;
+        const y = (e.clientY - (r.top + r.height / 2)) / window.innerHeight;
+        card.style.setProperty('--ry', (x * 30) + 'deg');
+        card.style.setProperty('--rx', (-y * 30) + 'deg');
+      }
+      function reset() {
+        card.style.setProperty('--ry', '0deg');
+        card.style.setProperty('--rx', '0deg');
+      }
+
+      // pointer events work for mouse, touch and pen
+      scene.addEventListener('pointermove', tilt);
+      scene.addEventListener('pointerdown', tilt);
+      scene.addEventListener('pointerup', reset);
+      scene.addEventListener('pointercancel', reset);
+      scene.addEventListener('pointerleave', reset);
+
+      // Press-in / spring-back like a physical button
+      function press() {
+        card.classList.remove('bounce');
+        card.classList.add('pressed');
+      }
+      function release() {
+        if (!card.classList.contains('pressed')) return;
+        card.classList.remove('pressed');
+        card.classList.add('bounce');
+        setTimeout(() => card.classList.remove('bounce'), 500);
+      }
+
+      card.addEventListener('pointerdown', press);
+      window.addEventListener('pointerup', release);
+      window.addEventListener('pointercancel', release);
+    </script>
+  </body>
+</html>
